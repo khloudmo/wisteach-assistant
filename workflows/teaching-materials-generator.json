@@ -1,0 +1,634 @@
+{
+  "name": "AI Educational Content Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Teaching Materials Generator",
+        "formDescription": "Enter a topic once and get a full resource package by email",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Subject",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Grade Level",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Lesson Topic",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Learning Objective",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Lesson Duration",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Curriculum or Standards"
+            },
+            {
+              "fieldLabel": "Language",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Available Resources"
+            },
+            {
+              "fieldLabel": "Specific Learner Needs"
+            },
+            {
+              "fieldLabel": "Assessment Requirements"
+            },
+            {
+              "fieldLabel": "Email",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4317d690-3ac2-4ec0-870c-21ced7715332",
+      "name": "On form submission"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0c4a61fa-e606-4c5b-a6bb-399c2e2499dd",
+              "name": "package",
+              "value": "=# Teaching Package: {{ $('On form submission').item.json['Lesson Topic'] }}  Subject: {{ $('On form submission').item.json.Subject }} | Grade: {{ $('On form submission').item.json['Grade Level'] }} | Duration: {{ $('On form submission').item.json['Lesson Duration'] }} | Language: {{ $('On form submission').item.json.Language }}  {{ $('Core Content').item.json.output }}  {{ $('Differentiated Versions').item.json.output }}  {{ $('Dyslexia Version').item.json.output }}  {{ $('Activities and Exercises').item.json.output }}  {{ $('Quiz and Summary').item.json.output }}  {{ $('Visuals and Guidance').item.json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        2336,
+        0
+      ],
+      "id": "b5444258-a6db-4b58-b925-8d83f3a3d6a6",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=TEACHER INPUTS\nSubject: {{ $('On form submission').item.json.Subject }}\nGrade level: {{ $('On form submission').item.json['Grade Level'] }}\nLesson topic: {{ $('On form submission').item.json['Lesson Topic'] }}\nLearning objective: {{ $('On form submission').item.json['Learning Objective'] }}\nLesson duration: {{ $('On form submission').item.json['Lesson Duration'] }}\nCurriculum or standards: {{ $('On form submission').item.json['Curriculum or Standards'] }}\nLanguage: {{ $('On form submission').item.json.Language }}\nAvailable resources: {{ $('On form submission').item.json['Available Resources'] }}\nSpecific learner needs: {{ $('On form submission').item.json['Specific Learner Needs'] }}\nAssessment requirements: {{ $('On form submission').item.json['Assessment Requirements'] }}\nWrite these sections using these exact headings:\n\n## A. Learning Objectives and Success Criteria\n- Clear, measurable objectives; what students should know or be able to do\n- Simple \"I can...\" success criteria students understand\n- The same core objective applies to every differentiated version\n\n## B. Teacher Explanation (teacher-facing)\n- Accurate, age-appropriate explanation in manageable steps\n- Essential vocabulary with simple definitions\n- Relatable examples and analogies\n- Common misconceptions and how to address them\n\n## C. Student Handout (student-facing)\n- Short introduction, key concepts, examples, brief review\n- Headings, bullet points, numbered steps, clear instructions\n- No unnecessary information or excessive text",
+        "options": {
+          "systemMessage": "Act as an experienced instructional designer, primary science teacher, educational content developer and inclusive education specialist who knows differentiated instruction, Universal Design for Learning (UDL) and strategies for supporting students with dyslexia. The learners are primary-school students. Write in the language given in the teacher inputs. If an input is blank, state a reasonable assumption in one line. Never invent curriculum standards or claim alignment that was not verified. Keep teacher guidance separate from student-facing content, and label each resource with its audience and learner level. Use exactly the headings requested. Before finishing, check that facts are accurate, content suits the grade, and answers match the questions."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "67d09372-5ffc-42b0-a4d6-def4cc461754",
+      "name": "Core Content"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=TEACHER INPUTS\nSubject: {{ $('On form submission').item.json.Subject }}\nGrade level: {{ $('On form submission').item.json['Grade Level'] }}\nLesson topic: {{ $('On form submission').item.json['Lesson Topic'] }}\nLearning objective: {{ $('On form submission').item.json['Learning Objective'] }}\nLesson duration: {{ $('On form submission').item.json['Lesson Duration'] }}\nCurriculum or standards: {{ $('On form submission').item.json['Curriculum or Standards'] }}\nLanguage: {{ $('On form submission').item.json.Language }}\nAvailable resources: {{ $('On form submission').item.json['Available Resources'] }}\nSpecific learner needs: {{ $('On form submission').item.json['Specific Learner Needs'] }}\nAssessment requirements: {{ $('On form submission').item.json['Assessment Requirements'] }}\nWrite section D using the same structure, tone and quality as this teacher-approved example.\n\nEXAMPLE (topic: Magnets)\n### Beginner (student-facing)\nMagnets pull on some metals. Try it: touch a magnet to a paper clip. Does it stick? Circle: YES / NO. Hint: look at the picture of the paper clip.\n### Intermediate (student-facing)\nMagnets attract objects made of iron, nickel or cobalt. Predict which 4 classroom objects a magnet will pick up. Test them. Explain one result in a full sentence.\n### Advanced / Challenge (student-facing)\nExplain why a magnet picks up a steel nail but not an aluminium can. Design a fair test for 5 materials and say what you will keep the same.\nNOW WRITE THIS FOR THE LESSON ABOVE, using these exact headings:\n\n## D. Differentiated Learning Versions\n### 1. Beginner (short explanations, familiar words, worked example, visual supports, hints, small steps, frequent checks for understanding)\n### 2. Intermediate (grade-level explanation, independent practice, mix of recall/comprehension/application, explain reasoning)\n### 3. Advanced / Challenge (problem-solving, analysis, investigation, extension; compare, justify, predict or design)",
+        "options": {
+          "systemMessage": "Act as an experienced instructional designer, primary science teacher, educational content developer and inclusive education specialist who knows differentiated instruction, Universal Design for Learning (UDL) and strategies for supporting students with dyslexia. The learners are primary-school students. Write in the language given in the teacher inputs. If an input is blank, state a reasonable assumption in one line. Never invent curriculum standards or claim alignment that was not verified. Keep teacher guidance separate from student-facing content, and label each resource with its audience and learner level. Use exactly the headings requested. Before finishing, check that facts are accurate, content suits the grade, and answers match the questions."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        576,
+        0
+      ],
+      "id": "60c2212a-7460-40a0-aa4d-7fd357ca3fbf",
+      "name": "Differentiated Versions"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=TEACHER INPUTS\nSubject: {{ $('On form submission').item.json.Subject }}\nGrade level: {{ $('On form submission').item.json['Grade Level'] }}\nLesson topic: {{ $('On form submission').item.json['Lesson Topic'] }}\nLearning objective: {{ $('On form submission').item.json['Learning Objective'] }}\nLesson duration: {{ $('On form submission').item.json['Lesson Duration'] }}\nCurriculum or standards: {{ $('On form submission').item.json['Curriculum or Standards'] }}\nLanguage: {{ $('On form submission').item.json.Language }}\nAvailable resources: {{ $('On form submission').item.json['Available Resources'] }}\nSpecific learner needs: {{ $('On form submission').item.json['Specific Learner Needs'] }}\nAssessment requirements: {{ $('On form submission').item.json['Assessment Requirements'] }}\nWrite section E. Use the two examples below to see how the SAME concept is adapted for each level, including the dyslexia-friendly version.\n\nEXAMPLE 1 (topic: Magnets)\nBeginner: Magnets pull on some metals. Touch a magnet to a paper clip. Does it stick?\nIntermediate: Magnets attract iron, nickel and cobalt. Predict which objects a magnet picks up, then test.\nAdvanced: Explain why a magnet picks up a steel nail but not an aluminium can.\nDyslexia-friendly: Key words: **magnet**, **attract**. Word bank: magnet | metal | stick. Steps: 1. Hold the magnet near a paper clip. 2. Does it stick? 3. Say your answer out loud or draw it. Sentence starter: \"The magnet sticks to ___.\"\n\nEXAMPLE 2 (topic: Plants need light)\nBeginner: Plants need light to grow. A plant in a dark box gets weak.\nIntermediate: Plants use light to make food. Predict what happens to a plant kept in the dark for one week.\nAdvanced: Design an experiment to test how different amounts of light change plant growth.\nDyslexia-friendly: Key words: **light**, **grow**. Word bank: plant | light | dark. Steps: 1. Look at plant A (light). 2. Look at plant B (dark). 3. Draw both plants. Sentence starter: \"The plant in the dark looks ___.\"\n\nNOW WRITE THIS FOR THE LESSON ABOVE, using these exact headings:\n\n## E. Dyslexia-Friendly Learning Version\n### Vocabulary Preview and Word Bank (new words in small groups)\n### Short Explanation (concise sentences, short sections with descriptive headings, key terms in bold, not colour alone)\n### Guided Example (before independent work)\n### Student Tasks (numbered sequential steps, short task sections, sentence starters)\n### Ways to Show Understanding (oral answers, diagrams, sorting, practical demonstration)\n### Adaptations Used (extra processing time, text-to-speech or audio, no penalty for spelling or decoding errors, clear layout, sans-serif font in the final document, and the purpose of each)\n\nTreat the strategies as adaptable options, not as the needs of every student with dyslexia. Keep the same scientific content and learning expectations as the other versions.",
+        "options": {
+          "systemMessage": "Act as an experienced instructional designer, primary science teacher, educational content developer and inclusive education specialist who knows differentiated instruction, Universal Design for Learning (UDL) and strategies for supporting students with dyslexia. The learners are primary-school students. Write in the language given in the teacher inputs. If an input is blank, state a reasonable assumption in one line. Never invent curriculum standards or claim alignment that was not verified. Keep teacher guidance separate from student-facing content, and label each resource with its audience and learner level. Use exactly the headings requested. Before finishing, check that facts are accurate, content suits the grade, and answers match the questions."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        928,
+        0
+      ],
+      "id": "3001d064-3de3-44cd-a68f-6395cbeb8836",
+      "name": "Dyslexia Version"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=TEACHER INPUTS\nSubject: {{ $('On form submission').item.json.Subject }}\nGrade level: {{ $('On form submission').item.json['Grade Level'] }}\nLesson topic: {{ $('On form submission').item.json['Lesson Topic'] }}\nLearning objective: {{ $('On form submission').item.json['Learning Objective'] }}\nLesson duration: {{ $('On form submission').item.json['Lesson Duration'] }}\nCurriculum or standards: {{ $('On form submission').item.json['Curriculum or Standards'] }}\nLanguage: {{ $('On form submission').item.json.Language }}\nAvailable resources: {{ $('On form submission').item.json['Available Resources'] }}\nSpecific learner needs: {{ $('On form submission').item.json['Specific Learner Needs'] }}\nAssessment requirements: {{ $('On form submission').item.json['Assessment Requirements'] }}\nWrite these sections using these exact headings:\n\n## F. Examples and Activities\n- At least 3 age-appropriate examples\n- Guided practice and independent practice\n- One interactive or hands-on activity (use the available resources)\n- One visual or multisensory activity\n- Short adaptation notes for Beginner, Intermediate, Advanced and Dyslexia-friendly\n\n## G. Practice Exercises (student-facing, clear instructions)\nInclude: multiple-choice, matching or sorting, fill-in-the-blank with a word bank, short-answer, and one application or problem-solving task.\n\n## H. Discussion Questions\nInclude: simple comprehension, \"explain your thinking\", real-life application, and extension questions for advanced learners. Add optional sentence starters and oral-response alternatives.",
+        "options": {
+          "systemMessage": "Act as an experienced instructional designer, primary science teacher, educational content developer and inclusive education specialist who knows differentiated instruction, Universal Design for Learning (UDL) and strategies for supporting students with dyslexia. The learners are primary-school students. Write in the language given in the teacher inputs. If an input is blank, state a reasonable assumption in one line. Never invent curriculum standards or claim alignment that was not verified. Keep teacher guidance separate from student-facing content, and label each resource with its audience and learner level. Use exactly the headings requested. Before finishing, check that facts are accurate, content suits the grade, and answers match the questions."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1280,
+        0
+      ],
+      "id": "39edd6aa-01b1-4c7d-8c7c-f74249fcdb30",
+      "name": "Activities and Exercises"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=TEACHER INPUTS\nSubject: {{ $('On form submission').item.json.Subject }}\nGrade level: {{ $('On form submission').item.json['Grade Level'] }}\nLesson topic: {{ $('On form submission').item.json['Lesson Topic'] }}\nLearning objective: {{ $('On form submission').item.json['Learning Objective'] }}\nLesson duration: {{ $('On form submission').item.json['Lesson Duration'] }}\nCurriculum or standards: {{ $('On form submission').item.json['Curriculum or Standards'] }}\nLanguage: {{ $('On form submission').item.json.Language }}\nAvailable resources: {{ $('On form submission').item.json['Available Resources'] }}\nSpecific learner needs: {{ $('On form submission').item.json['Specific Learner Needs'] }}\nAssessment requirements: {{ $('On form submission').item.json['Assessment Requirements'] }}\nWrite these sections using these exact headings:\n\n## I. Quiz and Answer Key\n- Quiz: 6 questions in mixed types, matching the learning objective and the assessment requirements. Do not make spelling, reading speed or handwriting the focus.\n### Answer Key (teacher-facing)\n- Correct answers, each with a brief explanation\n- A simple scoring guide\n- Accessible presentation and response options (read aloud, oral answers, drawing, extra time)\n\n## J. Summary\n- A concise lesson summary\n- 3 to 5 key takeaways\n- A short student-friendly recap\n- An optional vocabulary review",
+        "options": {
+          "systemMessage": "Act as an experienced instructional designer, primary science teacher, educational content developer and inclusive education specialist who knows differentiated instruction, Universal Design for Learning (UDL) and strategies for supporting students with dyslexia. The learners are primary-school students. Write in the language given in the teacher inputs. If an input is blank, state a reasonable assumption in one line. Never invent curriculum standards or claim alignment that was not verified. Keep teacher guidance separate from student-facing content, and label each resource with its audience and learner level. Use exactly the headings requested. Before finishing, check that facts are accurate, content suits the grade, and answers match the questions."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1632,
+        0
+      ],
+      "id": "a0a57c3e-3772-438e-84d9-5e9db12bd881",
+      "name": "Quiz and Summary"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=TEACHER INPUTS\nSubject: {{ $('On form submission').item.json.Subject }}\nGrade level: {{ $('On form submission').item.json['Grade Level'] }}\nLesson topic: {{ $('On form submission').item.json['Lesson Topic'] }}\nLearning objective: {{ $('On form submission').item.json['Learning Objective'] }}\nLesson duration: {{ $('On form submission').item.json['Lesson Duration'] }}\nCurriculum or standards: {{ $('On form submission').item.json['Curriculum or Standards'] }}\nLanguage: {{ $('On form submission').item.json.Language }}\nAvailable resources: {{ $('On form submission').item.json['Available Resources'] }}\nSpecific learner needs: {{ $('On form submission').item.json['Specific Learner Needs'] }}\nAssessment requirements: {{ $('On form submission').item.json['Assessment Requirements'] }}\nWrite these sections using these exact headings:\n\n## K. Visual-Content Prompts\nWrite specific, ready-to-use prompts for: (1) a labeled diagram, (2) a step-by-step concept visual, (3) sorting cards or a visual organizer, (4) a simple infographic. Each must be scientifically accurate, age-appropriate and uncluttered. Add a note that essential information must also be in text.\n\n## L. Accessibility and Teacher Guidance (teacher-facing)\n- The adaptations used in each version\n- The purpose of each dyslexia-support strategy\n- Ways to monitor student understanding\n- Options for extra scaffolding or extension\n- Limitations and anything the teacher should verify before use (including any assumptions made and standards alignment)",
+        "options": {
+          "systemMessage": "Act as an experienced instructional designer, primary science teacher, educational content developer and inclusive education specialist who knows differentiated instruction, Universal Design for Learning (UDL) and strategies for supporting students with dyslexia. The learners are primary-school students. Write in the language given in the teacher inputs. If an input is blank, state a reasonable assumption in one line. Never invent curriculum standards or claim alignment that was not verified. Keep teacher guidance separate from student-facing content, and label each resource with its audience and learner level. Use exactly the headings requested. Before finishing, check that facts are accurate, content suits the grade, and answers match the questions."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1984,
+        0
+      ],
+      "id": "b061b3ef-fa7a-4673-9244-ce561bafe7ee",
+      "name": "Visuals and Guidance"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json['Email'] }}",
+        "subject": "=Teaching package: {{ $('On form submission').item.json['Lesson Topic'] }}",
+        "emailType": "text",
+        "message": "Your complete teaching package is attached.",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        3232,
+        0
+      ],
+      "id": "a8a427cd-ff66-41eb-9e3d-b8a9062c5366",
+      "name": "Send a message"
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.package }}",
+        "destinationKey": "html",
+        "options": {
+          "tables": true
+        }
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        2560,
+        0
+      ],
+      "id": "6065f479-7fe0-4890-9b3f-48293e871747",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ed8f5deb-e3f7-40e9-98e9-37d627c042a9",
+              "name": "page",
+              "value": "=<html><head><meta charset=\"utf-8\"><style>body{font-family:Arial,sans-serif;font-size:14px;line-height:1.6;margin:30px} h1,h2,h3{margin-top:24px} table{border-collapse:collapse} td,th{border:1px solid #999;padding:6px}</style></head><body>{{ $json.html }}</body></html>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        2784,
+        0
+      ],
+      "id": "45aa513d-a1f3-4f50-a3b8-63031d81c5fa",
+      "name": "Wrap Page"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        224
+      ],
+      "id": "c6de23cf-c11f-4121-abbf-1e966069204a",
+      "name": "Google Gemini Chat Model"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        656,
+        224
+      ],
+      "id": "fa1605d6-5c5b-43de-b3c7-311761d041a3",
+      "name": "Google Gemini Chat Model1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1008,
+        224
+      ],
+      "id": "99835911-6b31-4800-997c-13ca24325f98",
+      "name": "Google Gemini Chat Model2"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        224
+      ],
+      "id": "236ce6b0-f5bd-4b92-98d8-784050a76bc0",
+      "name": "Google Gemini Chat Model3"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1712,
+        224
+      ],
+      "id": "aa1c2a22-a85d-4b2d-bcd9-8f9cef1e8588",
+      "name": "Google Gemini Chat Model4"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        2064,
+        224
+      ],
+      "id": "c89e318f-e76d-4f83-b280-f17d7cf7083e",
+      "name": "Google Gemini Chat Model5"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.html2pdf.app/v1/generate?apiKey=YOUR_HTML2PDF_API_KEY",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"html\": {{ JSON.stringify($json.page) }}\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "d2c7a7c1-47f0-46cc-9595-ad476e990fc5",
+      "name": "Convert HTML to PDF",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3008,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7ffaedc5-cc6d-4c47-8312-45a70d147f88",
+              "leftValue": "=     {{ ['## A.','## B.','## C.','## D.','## E.','## F.','## G.','## H.','## I.','## J.','## K.','## L.'].every(h => $json.package.includes(h)) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2400,
+        464
+      ],
+      "id": "d9f74af1-ceea-4ac2-be9a-317fe7a6fc97",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json['Email'] }}",
+        "subject": "Teaching package incomplete",
+        "emailType": "text",
+        "message": "A section is missing. Please run the form again.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2624,
+        560
+      ],
+      "id": "c282f226-06cb-4465-a00b-125795b4b9ba",
+      "name": "Send a message1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Core Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Core Content": {
+      "main": [
+        [
+          {
+            "node": "Differentiated Versions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Differentiated Versions": {
+      "main": [
+        [
+          {
+            "node": "Dyslexia Version",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dyslexia Version": {
+      "main": [
+        [
+          {
+            "node": "Activities and Exercises",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Activities and Exercises": {
+      "main": [
+        [
+          {
+            "node": "Quiz and Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quiz and Summary": {
+      "main": [
+        [
+          {
+            "node": "Visuals and Guidance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Visuals and Guidance": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Wrap Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wrap Page": {
+      "main": [
+        [
+          {
+            "node": "Convert HTML to PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Core Content",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Differentiated Versions",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Dyslexia Version",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Activities and Exercises",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Quiz and Summary",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Visuals and Guidance",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert HTML to PDF": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "nodeGroups": [],
+  "tags": []
+}

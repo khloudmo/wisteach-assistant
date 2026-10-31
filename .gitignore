@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+*.local.json
+
+.vscode/
+.idea/
+
+credentials.json
+secrets.json
+*.log
+node_modules/
+
+
